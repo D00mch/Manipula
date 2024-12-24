@@ -1,0 +1,117 @@
+(defn woofi-choose-tokens
+  [net-name net-xy price net-regexp on-chain? use-default?]
+  {:name (str "Woofi: select tokens " net-name)
+   :type :group
+   :actions
+   [(action-open-website "fi.woo.org/swap")
+    (cond-> {:name (str "Woofi: select network " net-name)
+             :type :keyboard
+             :keys [2000 [100 510] :mouse1 2500 net-xy :mouse1 1000]}
+      net-regexp (assoc :check
+                   {:type :pattern
+                    :await 10000
+                    :direction :ver
+                    :length 30
+                    :regexp net-regexp
+                    :xy [46 496]}))
+    {:name "Woofi: choose USDT in the preselected network"
+     :type :keyboard
+     :keys [[353 368] :mouse1 2000 :tab "USDT" [105 475] :mouse1]}
+    {:name "Woofi: type random number"
+     :type :keyboard
+     :keys
+     [[67 355] :mouse1 1000 [:ctrl :a] (subs (str (+ price (rand 1))) 0 7)]}
+    {:name "WooFi: Нажимаем кнопку Approve USDT"
+     :type :keyboard
+     :keys [[210 720] :mouse1 2000]
+     :check {:type :pattern
+             :await 10000
+             :direction :ver
+             :length 60
+             :regexp "b{10}"
+             :xy [374 691]}}
+    {:name "WooFi: Use default если появится"
+     :type :group
+     :actions (if use-default?
+                [common-mm-wait-fox-gone
+                 {:name "WooFi: ММ - нажимаем кнопку use default"
+                  :type :keyboard
+                  :keys [2000
+                         [:ctrl :f]
+                         "use default"
+                         :enter
+                         [:tab 3]
+                         [:enter 2]
+                         [:tab 5]
+                         :enter 3000 [50 160]]}
+                 {:name "WooFi: Нажимаем кнопку Swap"
+                  :type :keyboard
+                  :keys [5000 [210 720] :mouse1 2000]
+                  :check {:type :pattern
+                          :await 10000
+                          :direction :ver
+                          :length 60
+                          :regexp "b{10}"
+                          :xy [374 691]}}]
+                [])}
+    {:name "WooFi: Confirm Cross-Chain Swap"
+     :type :keyboard
+     :keys [2000 (if on-chain? [630 710] [620 665]) :mouse1 1000]
+     :check {:type :pattern
+             :await 10000
+             :direction :ver
+             :length 60
+             :regexp "b{10}"
+             :xy (if on-chain? [807 667] [807 629])}}
+    common-mm-wait-fox-gone
+    common-mm-proceed-next]})
+
+[{:name "WooFi: Main scenario"
+  :type :group
+  :check common-state-checks
+  :actions
+  [{:name "WooFi: Заходим на сайт https://fi.woo.org/swap"
+    :type :group
+    :safe true
+    :actions [(action-open-website "fi.woo.org/swap"
+                "WooFi: open https://fi.woo.org/swap")
+              {:name "WooFi: connect wallet, step 1"
+               :type :keyboard
+               :comment "============= Действия ниже —> подключить кошелек "
+               :wait 2000
+               :keys [2000 [210 720] :mouse1 2000]
+               :check {:type :pattern
+                       :await 10000
+                       :direction :ver
+                       :length 60
+                       :regexp "b{10}"
+                       :xy [374 691]}}
+              {:name "WooFi: Соглашаемся с правилами"
+               :type :keyboard
+               :keys (concat (keys-search "I agree to the Terms &")
+                       [[:shift :tab] :space])
+               :safe true}
+              {:name "WooFi: Выбрать кошелек MetaMask"
+               :type :keyboard
+               :keys [[571 427] :mouse1 2000]
+               :check {:type :pattern
+                       :await 10000
+                       :direction :hor
+                       :length 60
+                       :regexp "o{4}"
+                       :xy [571 427]}}
+              common-mm-wait-fox-gone
+              common-mm-proceed-next
+              common-mm-proceed-next
+              (action-mm-select-known-network "BNB chain")]}
+   {:name "WooFi: Покупка тонеков"
+    :type :group
+    :actions
+    [(woofi-choose-tokens "bnb" [] 5 "[xcr]*y[xcr]*" false true)
+     (woofi-choose-tokens "polygon" [90 666] 5 "[xrswv]*y[xrswv]*" true true)
+     (woofi-choose-tokens "optimism" [90 745]
+       5 "[xsvwroy]*b[xsvwroy]*"
+       true false)
+     (woofi-choose-tokens "arbitrum" [90 747]
+       20 "x{4,6}r*x{4,6}"
+       true false)]}]}]

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head> 
+  <meta charset="UTF-8" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+  <meta name="description" content="todo: describe app here" /> 
+  <title>Welcome to manipula</title> 
+  <!-- styles --> 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" /> 
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <script type="text/javascript">var csrfToken = '{{csrf-token}}';</script>
+ </head> 
+ <body> 
+     <div id="app"></div>
+     {% style "/css/screen.css"     %}
+     {% style "/css/codemirror.css" %}
+     {% style "/css/show-hint.css"  %}
+     {% style "/css/merge.css"  %}
+
+     <script src="/js/app.js"></script>   
+ </body>
+
+</html>

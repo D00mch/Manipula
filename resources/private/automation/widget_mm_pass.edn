@@ -1,0 +1,16 @@
+[(action-open-website (str url-metamask "/home.html#onboarding/metametrics"))
+ {:name "MM Password login: await"
+  :type :keyboard
+  :keys []
+  :check {:type :pattern,
+          :await 15000,
+          :direction :ver,
+          :length 120,
+          :regexp "o{4}",
+          :xy [872 92]}}
+ {:name "MM Widget: Password"
+  :type :insert-password}
+ {:name "MM Passowrd login: enter inserted MM password"
+  :type :keyboard
+  :delay 300
+  :keys [:enter]}]

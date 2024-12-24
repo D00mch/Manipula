@@ -1,0 +1,48 @@
+kit.git-config.edn
+.classpath
+.cpcache
+.DS_Store
+.nrepl-port
+.eastwood
+hs_err_pid*.log
+target
+checkouts
+classes
+log/
+node_modules/
+modules/
+
+# IntelliJ
+*.iml
+.idea/
+
+# Native
+/META-INF
+/reports
+dartclj-*-aarch64-darwin
+dartclj-*-aarch64-linux
+
+# Lint
+.clj-kondo/*
+!.clj-kondo/config.edn
+.calva/output-window/
+.lsp/.cache/
+.lsp/
+
+# CLJS
+.cljs_node_repl/
+cljs-test-runner-out/
+.shadow-cljs/
+
+# Node
+node_modules/
+
+# NPM Example App
+npm-test-app/target
+
+# Idea
+DartClojure.iml
+.idea/
+
+# Build secrets
+manipula1.sh

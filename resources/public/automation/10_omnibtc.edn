@@ -1,0 +1,97 @@
+(defn action-open-website
+  [website & [-name]]
+  {:name (or -name (str "Open website " website))
+   :type :keyboard
+   :keys [[:ctrl :t] [website] [:ctrl :v] :enter]})
+
+(defn keys-search [s]
+  [[:ctrl :f] [s] [:ctrl :v] :esc])
+
+(defn keys-search-select [s]
+  (vec (concat (keys-search s) [1000 :enter])))
+
+{:name "Omnibtc"
+ :type :group
+ :check common-state-checks
+ :actions
+ [(action-open-website "app.omnibtc.finance/swap"
+    "Omnibtc: open https://app.omnibtc.finance/swap")
+  {:name "Omnibtc: connect wallet, step 1"
+   :type :keyboard
+   :comment "============= Действия ниже —> подключить кошелек "
+   :wait 3000
+   :keys [[600 610] :mouse1 2000]
+   :check {:type :pattern
+           :await 10000
+           :direction :hor
+           :length 90
+           :regexp "[xr]*v[xr]*"
+           :xy [436 595]}}
+  {:name "Omnibtc: Select metamask wallet"
+  :type :keyboard
+  :keys [[475 285] :mouse1 2000]
+  :check {:type :pattern
+          :await 10000
+          :direction :hor
+          :length 30
+          :regexp "o{3}"
+          :xy [392 287]}}
+  common-mm-wait-fox-gone
+  common-mm-proceed-next
+  common-mm-proceed-next
+  {:name "Omnibtc: Close window with wallet selection"
+   :type :keyboard
+   :keys [2000 [888 160] :mouse1 2000]}
+  {:name "Omnibtc: Select USDC.e arbitrum"
+   :type :keyboard
+   :keys [[620 315] :mouse1 2000 :tab "USDC.e" 2000 [600 475] :mouse1 2000]
+   :check {:type :pattern
+           :await 10000
+           :direction :hor
+           :length 60
+           :regexp "[x]*g[x]*"
+           :xy [615 354]}}
+  {:name "Omnibtc: Select USDT optimism"
+   :type :keyboard
+   :keys [2000 [560 410] :mouse1 2000 :tab "USDT" 2000 [600 475] :mouse1 2000]
+   :check {:type :pattern
+           :await 10000
+           :direction :hor
+           :length 60
+           :regexp "[x]*g[x]*"
+           :xy [615 354]}}
+  {:name "Omnibtc: Select max value(click on button max)"
+   :type :keyboard
+   :keys [[790 515] :mouse1 2000]
+   :check {:type :pattern
+           :await 10000
+           :direction :hor
+           :length 60
+           :regexp "[x]*g[x]*"
+           :xy [615 354]}}
+  {:name "Omnibtc: Select LayerZero Protocol"
+   :type :keyboard
+   :keys [[627 739] :mouse1]}
+  {:name "Omnibtc: Click on swap button"
+   :type :keyboard
+   :keys [[300 680] :mouse1 2000]
+   :check {:type :pattern
+           :await 10000
+           :direction :hor
+           :length 60
+           :regexp "[xr]*v[xr]*"
+           :xy [133 667]}}
+  {:name "Omnibtc: Click on Confirm swap"
+   :type :keyboard
+   :keys [[630 700] :mouse1 2000]
+   :check {:type :pattern
+           :await 10000
+           :direction :hor
+           :length 60
+           :regexp "[xr]*v[xr]*"
+           :xy [438 677]}}
+  common-mm-wait-fox-gone
+  common-mm-proceed-next
+  common-mm-proceed-next
+  common-mm-wait-fox-gone
+  common-mm-proceed-next]}

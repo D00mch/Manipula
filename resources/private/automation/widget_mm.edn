@@ -1,0 +1,106 @@
+(defn search [s] [[:ctrl :f] s [:tab 3] :enter])
+
+(def action-mm-is-loaded
+  {:type :keyboard
+   :name "MM Widget: is loaded"
+   :keys []
+   :check [
+           {:type :!pattern
+            :xy [619 341]
+            :regexp "o{10}"
+            :direction :hor
+            :length 120
+            :await 10000}
+           {:type :pattern
+            :xy [256 109]
+            :regexp "o{5}"
+            :direction :ver
+            :length 90
+            :await 10000}]})
+
+[{:name "MM Widget"
+  :type :group
+  :actions
+  [(action-open-website
+    (str url-metamask "/home.html#onboarding/metametrics"))
+   action-mm-is-loaded
+   {:type :keyboard
+    :name "MM Widget: select english"
+    :delay 300
+    :keys [[852 145] :mouse1 1000 "English" :enter 1000 [:ctrl :w]]}
+   (action-open-website
+    (str url-metamask "/home.html#onboarding/welcome"))
+   action-mm-is-loaded
+   {:name "MM Widget: agree to Trms of use"
+    :type :keyboard
+    :wait 1000
+    :delay 300
+    :keys (concat [1000]
+                  (search "I agree to")
+                  [:tab [:shift :tab] :space [:tab 3] :space]
+                  [1500]
+                  (search "I agree")
+                  [:enter])
+    :check {:type :opened! :await 3000 :regexp "^chrome-extension.*welcome$"}}
+   action-mm-is-loaded
+   {:name "MM Widget: enter private key"
+    :type :keyboard
+    :delay 300
+    :keys (concat [[:ctrl :f] "3." :enter :esc]
+                  (repeat 4 [:shift :tab]))
+    :check {:type :opened!
+            :await 3000
+            :regexp "^chrome-extension.*import-with-recovery-phrase$"}}
+   {:name "MM Widget: Seed"
+    :type :insert-mm-seed}
+   {:name "MM Widget: Password"
+    :wait 4000
+    :type :insert-password}
+   {:name "MM Widget: Tab next"
+    :type :keyboard
+    :delay 300
+    :keys [:tab]}
+   {:name "MM Widget: Password"
+    :type :insert-password}
+   {:name "MM Widget: enter inserted MM password"
+    :type :keyboard
+    :delay 300
+    :keys [:tab
+           :space
+           [:tab 2]
+           :enter]}
+   action-mm-is-loaded
+   {:name "MM Widget: skip secure"
+    :type :keyboard
+    :delay 300
+    :keys (concat (search "remind me later")
+                  [:space 1500]
+                  (search "skip account security")
+                  [:tab :space [:tab 2] :space])
+    :safe true
+    :check {:type :opened!
+            :await 3000
+            :regexp "^chrome-extension.*secure-your-wallet$"}}
+   action-mm-is-loaded
+   {:name "MM Widget: complete MM creation"
+    :type :keyboard
+    :delay 300
+    :keys (concat (search "got it") [:space])
+    :safe true
+    :check
+    {:type :opened! :await 3000 :regexp "^chrome-extension.*completion$"}}
+   action-mm-is-loaded
+   {:name "MM Widget: complete MM, pin-extension skip"
+    :type :keyboard
+    :delay 300
+    :keys (concat (search "Next")
+                  [:space 2000]
+                  (search "Done")
+                  [2000 :space]
+                  [[601 765] :mouse1] ;; иногда "done" не нажимается поиском
+                  [:space])
+    :safe true
+    :check
+    {:type :opened! :await 3000 :regexp "^chrome-extension.*pin-extension$"}}
+  ;; try it out, can we avoid skiping it?
+   ]}]

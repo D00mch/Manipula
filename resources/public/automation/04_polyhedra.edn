@@ -1,0 +1,245 @@
+[{:name "Polyhedra"
+  :type :group
+  :check common-state-checks
+  :actions
+  [{:name "Polyhedra: Заходим на Twitter"
+    :type :group
+    :actions
+    [{:name "Polyhedra: open Twitter post - CodeConqueror"
+      :type :keyboard
+      :keys [2000
+             [:ctrl :t]
+             "https://twitter.com/PolyhedraZK/status/1678639611692695552"
+             :enter
+             2000]}
+     {:name "Polyhedra CodeConqueror: Retweet"
+      :type :keyboard
+      :keys [[367 848] :mouse1 [295 850] :mouse1 1000]
+      :check {:type :pattern
+              :await 10000
+              :direction :hor
+              :length 30
+              :regexp "w*s{3}w*"
+              :xy [345 848]}}
+     {:name "Polyhedra: Минтим NFT CodeConqueror"
+      :type :group
+      :actions
+      [{:name "Polyhedra: Минтим NFT CodeConqueror в сети BNB"
+        :type :keyboard
+        :keys
+        [2000 [:ctrl :t] "https://zkbridge.com/gallery/pandra" :enter 2000]}
+       {:name "Polyhedra: Подключаем кошелек Metamask"
+        :type :keyboard
+        :keys [3000 [:ctrl :f] "Connect wallet" [:tab 3] [:enter 2] 2000]}
+       {:name "Polyhedra: Выбрать Metamask"
+        :type :keyboard
+        :keys [[:ctrl :f] "Metamask" [:tab 3] [:enter 2]]}
+       common-mm-wait-fox-gone
+       common-mm-proceed-next
+       common-mm-proceed-next
+       common-mm-wait-fox-gone
+       common-mm-proceed-next
+       {:name "Polyhedra: Нажать на кнопку Claim"
+        :type :keyboard
+        :keys [2000 [:ctrl :f] "Claim" [:tab 3] [:enter 2] 2000]
+        :check {:type :pattern
+                :await 10000
+                :direction :hor
+                :length 60
+                :regexp "g{60}"
+                :xy [707 671]}}
+       common-mm-wait-fox-gone
+       common-mm-proceed-next
+       {:name "Polyhedra: zkBridge NFT"
+        :type :keyboard
+        :keys [[:ctrl :f] "zkbridge nft" [:tab 3] [:enter 2] 2000]
+        :check {:type :pattern
+                :await 25000
+                :direction :hor
+                :length 60
+                :regexp "[x]*g+[x]+g+[x]*"
+                :xy [483 307]}}
+       {:name "Polyhedra: Confirm import"
+        :type :keyboard
+        :keys [[:ctrl :f] "Confirm import" [:tab 3] [:enter 2] 2000]
+        :check {:type :pattern
+                :await 10000
+                :direction :hor
+                :length 60
+                :regexp "[xb]*g[xb]*"
+                :xy [406 258]}}
+       {:name "Polyhedra: Import an NFT - Click next"
+        :type :keyboard
+        :keys [[:ctrl :f] "Next" [:tab 3] [:enter 2] 2000 [:down 2]]
+        :check {:type :pattern
+                :await 10000
+                :direction :hor
+                :length 60
+                :regexp "[xb]*g[xb]*"
+                :xy [406 258]}}
+       {:name "Polyhedra: Select Polygon network"
+        :type :keyboard
+        :keys [2000 [408 633] :mouse1 [352 770] :mouse1]
+        :check {:type :pattern
+                :await 10000
+                :direction :hor
+                :length 30
+                :regexp "x*g*x*"
+                :xy [977 633]}}
+       {:name "Polyhedra: Click Next button after select Polygon network"
+        :type :keyboard
+        :keys [[:ctrl :f]
+               "Next"
+               :enter
+               [:tab 3]
+               [:enter 2]
+               2000
+               #_(Нажимаем кнопку Approve)
+               [:ctrl :f]
+               "Approve"
+               [:tab 3]
+               [:enter 2]
+               5000]
+        :check {:type :pattern
+                :await 10000
+                :direction :hor
+                :length 60
+                :regexp "[xgbsw]*v[xgbsw]*"
+                :xy [326 637]}}
+       common-mm-wait-fox-gone
+       common-mm-proceed-next
+       {:name "Polyhedra: Нажимаем кнопку Transfer"
+        :type :keyboard
+        :keys [2000 [776 788] :mouse1]
+        :check {:type :pattern
+                :await 20000
+                :direction :hor
+                :length 60
+                :regexp "g{30}"
+                :xy [697 771]}}
+       common-mm-wait-fox-gone
+       common-mm-proceed-next
+       {:name "Polyhedra: Ожидания завершения транзакции"
+        :type :keyboard
+        :regroup {:times 3
+                  :check {:type :pattern
+                          :await (* 30 60 1000)
+                          :direction :hor
+                          :length 90
+                          :regexp "g{90}"
+                          :xy [700 746]}}
+        :keys [[:ctrl :w] 2000]}]}]}]}
+ {:name "Polyhedra: Минтим NFT PixelProwler"
+  :type :group
+  :actions [{:name "Polyhedra: Минтим PixelProwler в сети Polygon"
+             :type :keyboard
+             :keys [2000
+                    [:ctrl :t]
+                    "https://zkbridge.com/gallery/pandra"
+                    :enter
+                    2000
+                    [600 545] 1000 [:ctrl :r] 2000]}
+            {:name "Polyhedra: Переключаем NFT на PixelProwler"
+             :type :keyboard
+             :keys [[605 542] :mouse1 2000]
+             :check {:type :pattern
+                     :await 10000
+                     :direction :hor
+                     :length 30
+                     :regexp "[cy]*r[cy]*"
+                     :xy [588 542]}}
+            {:name "Polyhedra: Click claim - PixelProwler"
+             :type :keyboard
+             :keys [[:ctrl :f] "Claim" [:tab 3] [:enter 2] 2000]
+             :check {:type :pattern
+                     :await 10000
+                     :direction :hor
+                     :length 30
+                     :regexp "[xsb]*v[xsb]*"
+                     :xy [686 590]}}
+            common-mm-wait-fox-gone
+            common-mm-proceed-next
+            common-mm-proceed-next
+            common-mm-wait-fox-gone
+            common-mm-proceed-next
+            {:name "Polyhedra: zkBridge NFT"}
+            {:name "Polyhedra: Confirm import"}
+            {:name "Polyhedra: Import an NFT - Click next"}
+            {:name "Polyhedra: Select Receiver Blockchain - Выбираем сеть BNB"
+             :type :keyboard
+             :keys [[977 633] :mouse1 [390 720] :mouse1 2000]
+             :check {:type :pattern
+                     :await 10000
+                     :direction :hor
+                     :length 30
+                     :regexp "x*g*x*"
+                     :xy [977 633]}}
+            {:name "Polyhedra: Click Next button after select BNB network"
+             :type :keyboard
+             :keys [[:ctrl :f]
+                    "Next"
+                    :enter
+                    [:tab 3]
+                    [:enter 2]
+                    2000
+                    #_(Нажимаем кнопку Approve)
+                    [:ctrl :f]
+                    "Approve"
+                    [:tab 3]
+                    [:enter 2]
+                    3000]
+             :check {:type :pattern
+                     :await 10000
+                     :direction :hor
+                     :length 60
+                     :regexp "[xgorsw]*y[xgorsw]*"
+                     :xy [326 634]}}
+            common-mm-proceed-next
+            {:name "Polyhedra: Нажимаем кнопку Transfer"}
+            common-mm-wait-fox-gone
+            common-mm-proceed-next
+            {:name "Polyhedra: Ожидания завершения транзакции"}]}
+ {:name "Polyhedra: Минтим NFT MelodyMaven"
+  :type :group
+  :actions [{:name "Polyhedra: Минтим MelodyMaven в сети Polygon"
+             :type :keyboard
+             :keys [2000
+                    [:ctrl :t]
+                    "https://zkbridge.com/gallery/pandra"
+                    :enter
+                    2000
+                    [600 545] 1000 [:ctrl :r] 2000]}
+            {:name "Polyhedra: Переключаем NFT на MelodyMaven"
+             :type :keyboard
+             :keys [[605 542] :mouse1 2000 :mouse1 2000]
+             :check {:type :pattern
+                     :await 10000
+                     :direction :hor
+                     :length 30
+                     :regexp "[cy]*r[cy]*"
+                     :xy [588 542]}}
+            {:name "Polyhedra: Click claim - PixelProwler"
+             :type :keyboard
+             :keys [[:ctrl :f] "Claim" [:tab 3] [:enter 2] 2000]
+             :check {:type :pattern
+                     :await 10000
+                     :direction :hor
+                     :length 30
+                     :regexp "[xswry]*o[xswry]*"
+                     :xy [686 590]}}
+            common-mm-wait-fox-gone
+            common-mm-proceed-next
+            common-mm-proceed-next
+            common-mm-wait-fox-gone
+            common-mm-proceed-next
+            {:name "Polyhedra: zkBridge NFT"}
+            {:name "Polyhedra: Confirm import"}
+            {:name "Polyhedra: Import an NFT - Click next"}
+            {:name "Polyhedra: Select Receiver Blockchain - Выбираем сеть BNB"}
+            {:name "Polyhedra: Click Next button after select BNB network"}
+            common-mm-wait-fox-gone
+            common-mm-proceed-next
+            {:name "Polyhedra: Нажимаем кнопку Transfer"}
+            common-mm-wait-fox-gone
+            common-mm-proceed-next
+            {:name "Polyhedra: Ожидания завершения транзакции"}]}]

@@ -1,0 +1,141 @@
+(def common-mm-transaction-verify-acc
+  {:name "Stargate: Verify account, MM"
+   :type :keyboard
+   :wait 2000
+   :keys [2000 [:ctrl :f] "verify account" :enter [:tab 3] [:enter 2]]
+   :check {:type :pattern
+           :await 10000
+           :direction :hor
+           :length 30
+           :regexp "g{30}"
+           :xy [530 543]}})
+
+[{:name "STARGATE"
+  :type :group
+  :check common-state-checks
+  :actions
+  [{:name "Вступаем в гильдию https://guild.xyz/stargate"
+    :type :group
+    :actions [(action-open-website "https://guild.xyz/stargate")
+              {:name "Stargate: Join Guild to get roles"
+               :type :click
+               :xy [918 403]
+               :check {:type :pattern
+                       :await 10000
+                       :direction :hor
+                       :length 30
+                       :regexp "g{30}"
+                       :xy [918 403]}}
+              {:name "Stargate: Присоеденить кошелек"
+               :type :keyboard
+               :keys [5000 [760 423] :mouse1 2000]}
+              {:name "Stargate: Выбрать кошелек MetaMask"
+               :type :keyboard
+               :delay 500
+               :wait 4000
+               :keys (keys-search-select "Metamask")}
+              common-mm-wait-fox-gone
+              common-mm-proceed-next
+              common-mm-proceed-next
+              common-mm-transaction-verify-acc
+              common-mm-wait-fox-gone
+              common-mm-proceed-next
+              {:name "Stargate: Проверить доступ к подключению"
+               :type :keyboard
+               :wait 5000
+               :keys (keys-search-select "Check access to join")}]}
+   {:name "Stargate: Взаимодействуем с мостом"
+    :type :group
+    :wait 5000
+    :check common-state-checks
+    :actions
+    [(action-open-website "https://stargate.finance/transfer")
+     {:name "Stargate: Connect Wallet"
+      :type :keyboard
+      :wait 10000
+      :keys (keys-search-select "Connect wallet")
+      :check [{:type :pattern
+               :await 10000
+               :direction :hor
+               :length 120
+               :regexp "[sdbxrcoy]*w+[sdbxrcoy]+w+[sdbxrcoy]*"
+               :xy [1047 120]}
+              {:type :pattern
+               :await 10000
+               :direction :hor
+               :length 120
+               :regexp "d{10}"
+               :xy [1047 120]}]}
+     {:name "Stargate: Выбрать MetaMask"
+      :type :keyboard
+      :keys [[763 326] :mouse1 2000]
+      :check {:type :pattern
+              :await 10000
+              :direction :hor
+              :length 60
+              :regexp "o{2}"
+              :xy [763 326]}}
+     common-mm-wait-fox-gone
+     common-mm-proceed-next
+     common-mm-proceed-next
+     {:name "Stargate: Group. Бриджим весь USDT из avalanche в BSC"
+      :type :group
+      :actions
+      [;; Эту группу будем перезапускать, поэтому открываем новую страницу,
+       ;; чтобы начать с чистого листа
+       (action-close-tab)
+       (action-open-website "https://stargate.finance/transfer")
+       {:name "Stargate: Выбрать сеть Avalanche, usdt"
+        :type :keyboard
+        :regroup {:times 2
+                  :check {:type :pattern
+                          :await 10000
+                          :direction :hor
+                          :length 30
+                          :regexp "s{30}"
+                          :xy [525 805]}}
+        :wait 10000
+        :keys
+        [2000 [580 355] :mouse1 1000 [:ctrl :a] "USDT" [507 444] :mouse1 1000]}
+       {:name "Stargate: Выбрать сеть BNB, usdt"
+        :type :keyboard
+        :delay 500
+        :keys (concat [[750 465] :mouse1 1000]
+                (keys-search-select "BNB")
+                [#_(Выбираем токен USDT)
+                 [610 471]
+                 :mouse1
+                 1000
+                 [:ctrl :a]
+                 "USDT"
+                 [560 450]
+                 :mouse1
+                 1000
+                 #_(Выбираем максимальное значение)
+                 [770 555]
+                 :mouse1
+                 1000])}
+       {:name "Stargate: Нажимаем на кнопку Transfer"
+        :type :keyboard
+        :keys [[625 825] :mouse1 1000]}
+       common-mm-wait-fox-gone
+       {:name "Stargate: ММ - Подтверждение максимального перевода"
+        :type :keyboard
+        :keys [2000
+               [:ctrl :f]
+               "use default"
+               :enter
+               [:tab 3]
+               [:enter 2]
+               [:tab 5]
+               :enter 3000]}
+       common-mm-wait-fox-gone
+       common-mm-proceed-next]
+      :repeat-unless {:times 2
+                      :check {:type :pattern
+                              :await (* 30 60 1000)
+                              :direction :hor
+                              :length 120
+                              :regexp
+                              "[wrsx]*b+[wrsx]+b+[wrsx]+b+[wrsx]+b+[wrsx]*"
+                              :xy [589 401]}}}]}]}]

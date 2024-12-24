@@ -1,0 +1,164 @@
+(defn bungee-choose-token
+  [token-name initial-coordinates]
+  (concat [initial-coordinates :mouse1 4000] ;; мышью выбираем токен
+    (keys-search-select token-name)))
+
+(defn bungee-optionally-press-accept-new-quote
+  [x y]
+  {:name "bungee: optionally press 'accept new quote'"
+   :type :group
+   :safe true
+   :actions [{:name "bungee: search 'accept new quote' to select it"
+              :type :keyboard
+              :keys (keys-search "accept new quote")}
+             {:name "bungee: click on 'accept new quote' if found"
+              :type :keyboard
+              :keys [[(+ x 90) y] :mouse1]
+              :check {:type :pattern
+                      :await 2000
+                      :direction :hor
+                      :length 180
+                      :regexp "b{2,3}"
+                      :xy [x y]}}]})
+
+[{:name "bungee"
+  :type :group
+  :check common-state-checks
+  :actions
+  [{:name "bungee: заходим на сайт bungee.exchange"
+    :type :group
+    :actions
+    [(action-open-website "https://www.bungee.exchange/"
+       "bungee: открываем страницу bungee.exchange")
+     {:name "bungee: нажимаем на кнопку agree and continue"
+      :type :keyboard
+      :keys [10000 [509 709] :mouse1 2000]
+      :check {:type :pattern
+              :await 10000
+              :direction :hor
+              :length 60
+              :regexp "b*"
+              :xy [509 709]}}
+     {:name "bungee: подключаем кошелек connect wallet"
+      :type :keyboard
+      :keys (keys-search-select "connect wallet")
+      :check {:type :pattern
+              :await 10000
+              :direction :hor
+              :length 60
+              :regexp "[xs]*w[xs]*"
+              :xy [1115 116]}}
+     {:name "bungee: выбираем metamask"
+      :type :keyboard
+      :keys [2000 [:ctrl :f] "metamask" :enter [:tab 3] [:enter 2]]}
+     common-mm-wait-fox-gone
+     common-mm-proceed-next
+     common-mm-proceed-next
+     common-mm-wait-fox-gone
+     common-mm-proceed-next
+     {:name "bungee: включаем свет"
+      :type :keyboard
+      :wait 5000
+      :keys [2000 [1115 116] :mouse1]
+      :check {:type :pattern
+              :await 10000
+              :direction :hor
+              :length 60
+              :regexp "[xs]*w[xs]*"
+              :xy [1115 116]}}
+     (action-mm-select-known-network "BNB Chain")
+     ;; Вся эта группа должна перезапуститься, если не сработает
+     ;; :repeat-unless
+     {:name "bungee: меняем монеты в сети BNB"
+      :type :group
+      :actions
+      [{:name "bungee: открываем страницу bungee.exchange"}
+       {:name "bungee: select tockens group, sometimes fails from first try"
+        :type :group
+        :wait 20000
+        :actions [{:name "bungee: меняем монету на usdt"
+                   :type :keyboard
+                   ;; сайт жутко тормозит и пропускает команды
+                   :delay 500
+                   :keys (bungee-choose-token "usdt" [801 381])}
+                  {:name "bungee: меняем монету на usdt в сети polygon"
+                   :type :keyboard
+                   :delay 500
+                   :wait 2000
+                   :keys (concat (bungee-choose-token "usdt" [815 518]))}]}
+       {:name "bungee: вводим всю сумму"
+        :type :keyboard
+        :wait 2000
+        :keys [[840 323] :mouse1 :mouse1]}
+       {:name "bungee: select 'view all', that's updated all the time"
+        :type :group
+        :actions [{:name "bungee: выбираем список мостов"
+                   :type :keyboard
+                   :keys (keys-search "view all")}
+                  {:name "bungee: make sure view all is selected"
+                   :type :keyboard
+                   :keys (concat (keys-search "view all") [500 :space])
+                   :check {:type :pattern
+                           :await 15000
+                           :direction :ver
+                           :length 60
+                           :regexp "b"
+                           :xy [746 639]}}]
+        :repeat-unless {:times 4
+                        :check {:type :pattern
+                                :await 3000
+                                :direction :ver
+                                :length 60
+                                :regexp "^s*w*$"
+                                :xy [662 158]}}}
+       {:name "bungee: выбираем мост Stargate"
+        :type :keyboard
+        :keys [[:ctrl :f] "Stargate" :enter [:tab 3] [:enter 2] 2000]
+        :check {:type :pattern
+                :await 10000
+                :direction :hor
+                :length 60
+                :regexp "s*w*"
+                :xy [339 292]}}
+       {:name "bungee: нажимаем кнопку review route"
+        :type :keyboard
+        :keys [[630 795] :mouse1 2000]
+        :check {:type :pattern
+                :await 10000
+                :direction :hor
+                :length 60
+                :regexp "b*"
+                :xy [471 795]}}
+       (bungee-optionally-press-accept-new-quote 618 779)
+       common-mm-wait-fox-gone
+       {:name "bungee: ММ - Подтверждение максимального перевода"
+        :type :keyboard
+        :keys [2000
+               [:ctrl :f]
+               "use default"
+               :enter
+               [:tab 3]
+               [:enter 2]
+               [:tab 5]
+               :enter]}
+       (bungee-optionally-press-accept-new-quote 618 779)
+       common-mm-wait-fox-gone
+       common-mm-proceed-next
+       common-mm-proceed-next
+       {:name "bungee: repeat the parent if no bridge button"
+        :type :keyboard
+        :regroup {:times 3
+                  :check {:type :pattern
+                          :await 10000
+                          :direction :hor
+                          :length 180
+                          :regexp "w{10}b{10}"
+                          :xy [383 733]}}
+        :keys []}]
+      :repeat-unless {:times 2
+                      :check [{:type :pattern
+                               :await (* 30 60 1000)
+                               :direction :hor
+                               :length 60
+                               :regexp "g{3}"
+                               :xy [415 585]}]}}]}]}]

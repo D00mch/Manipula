@@ -1,0 +1,13 @@
+{:nrepl {:port 7002}
+ :deps {:aliases [:cljs]}
+ :builds       {:app {:target           :browser
+                      :output-dir       "target/classes/cljsbuild/public/js"
+                      :asset-path       "/js"
+                      :modules          {:app {:entries [dumch.manipula.core]
+                                               :init-fn dumch.manipula.core/init!}}
+                      :devtools         {:after-load dumch.manipula.core/mount-root
+                                         :watch-dir  "public"}
+                      :compiler-options {:warnings {:redef-in-file false
+                                                    :redef         false}}}}}
+
+;; npx shadow-cljs watch app

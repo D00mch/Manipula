@@ -1,0 +1,150 @@
+(defn metamask-connect-network
+  [net-name]
+  {:name (str "Metamask: connect network to metamask " net-name)
+   :type :group
+   :actions [{:name (str "Metamask: choose network " net-name)
+              :type :keyboard
+              :delay 300
+              :keys (concat
+                      ;; reload a page
+                      [3000 [:ctrl :r] 3000]
+                      ;; clear mouse cursor, select networks
+                      [[219 215] [:shift :tab] 1000 :space]
+                      ;; choose target network
+                      (keys-search-select net-name))}
+             common-mm-wait-fox-gone
+             common-mm-proceed-next
+             common-mm-proceed-next
+             {:name "Metamask: clear mouse posiiton"
+              :type :keyboard
+              :keys [[219 215]]}]})
+
+{:name "Metamask: Покупаем AVAX за 5 USDT через свапалку в metamask"
+ :type :group
+ :check common-state-checks
+ :actions
+ [(action-open-website "portfolio.metamask.io/swap"
+    "Metamask: open https://portfolio.metamask.io/swap")
+  (metamask-connect-network "bnb")
+  (metamask-connect-network "polygon")
+  (metamask-connect-network "arbitrum")
+  ;(metamask-conenect-network "optimism") ;; errors with optimism
+  (metamask-connect-network "avalanche")
+  {:name "Metamask: connect wallet, step 1"
+   :type :keyboard
+   :comment "============= Действия ниже —> подключить кошелек "
+   :wait 3000
+   :keys (keys-search-select "connect wallet")}
+  {:name "Metamask:, connect wallet, step 2"
+   :type :keyboard
+   :wait 1500
+   :keys (keys-search-select "MetaMask")}
+  common-mm-wait-fox-gone
+  common-mm-proceed-next
+  common-mm-proceed-next
+  {:name "Metamask: change tockens group"
+   :type :group
+   :wait 2000
+   :actions [(action-close-tab
+               "Metamask: close previous website to avoid duplication")
+             {:name "Metamask: open https://portfolio.metamask.io/swap"}
+             {:name "Metamask: clear mouse position before selecting USDT"
+              :type :mouse-move
+              :comment "============= Действия ниже —> выбрать токены "
+              :xy [0 0]}
+             {:name "Metamask: swap from USDT, first click"
+              :type :click
+              :wait 1000
+              :xy [578 455]
+              :check {:type :pattern
+                      :await 10000
+                      :direction :hor
+                      :length 60
+                      :regexp "w{9}s{20}"
+                      :xy [533 601]}}
+             {:name "Metamask: type USDT to chose it"
+              :type :keyboard
+              :wait 1500
+              :keys ["USDT"]}
+             {:name "Metamask: swap from USDT, click on USDT"
+              :type :click
+              :xy [685 516]
+              :wait 1000}
+             {:name "Metamask: select avax"
+              :type :keyboard
+              :delay 200
+              :wait 1500
+              :keys [[271 268]
+                     :mouse1
+                     [:ctrl :f]
+                     "Select a token"
+                     :enter
+                     :tab
+                     :tab
+                     :tab
+                     :enter
+                     :enter
+                     2000
+                     "Avax"
+                     [627 665]
+                     :mouse1]}
+             {:name "Metamask: set usdt to 5.(rand)"
+              :type :keyboard
+              :wait 1500
+              :keys [[:ctrl :f]
+                     "Swap from"
+                     :enter
+                     :tab
+                     :tab
+                     :tab
+                     :enter
+                     :enter
+                     :tab
+                     :tab
+                     (subs (str (+ 5 (rand 1))) 0 7)]}
+             {:name "Metamask: get quotes, step 1"
+              :type :keyboard
+              :comment "============= Действия ниже —> поменять токены "
+              :wait 2000
+              :keys [[251 227]
+                     :mouse1
+                     [:ctrl :f]
+                     "get quotes"
+                     :enter
+                     :tab
+                     :tab
+                     :tab
+                     :enter
+                     500
+                     :enter
+                     3000]}
+             {:name "Metamask: await transaction approval (swap button)"
+              :type :click
+              :xy [673 774]
+              :wait 2000
+              :check {:type :pattern
+                      :await 20000
+                      :direction :ver
+                      :length 270
+                      :regexp "b{30}"
+                      :xy [590 686]}}
+             common-mm-wait-fox-gone
+             common-mm-proceed-next
+             {:name "Metamask: Swap token, click on swap button"
+              :type :keyboard
+              :keys [2000 [673 774] :mouse1]
+              :check {:type :pattern
+                      :await 20000
+                      :direction :ver
+                      :length 60
+                      :regexp "b{30}"
+                      :xy [588 740]}}
+             common-mm-wait-fox-gone
+             common-mm-proceed-next]
+   :repeat-unless {:times 3
+                   :check {:type :pattern
+                           :await (* 30 60 1000)
+                           :direction :hor
+                           :length 150
+                           :regexp "w{2,15}s?g{1,3}s?w{6,20}s?g{1,3}s?w{2,15}"
+                           :xy [651 406]}}}]}

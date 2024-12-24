@@ -1,0 +1,109 @@
+(defn layer3-usd-select
+  [xy coin-name]
+  (let [name-postfix (str xy "," coin-name)]
+    {:name (str "Layer3: select coin " name-postfix)
+     :type :group
+     :wait 1000
+     :actions [{:name "Layer3: open top coin selection window"
+                :type :click
+                :xy xy}
+               {:name (str "Layer3: choose " coin-name " USDT in modal window")
+                :type :keyboard
+                :keys [coin-name 1500 [502 478] :mouse1]
+                :check {:type :!pattern
+                        :await 2000
+                        :direction :hor
+                        :length 60
+                        :regexp "x{15,19}y{40,49}"
+                        :xy [407 573]}}]}))
+
+[(action-mm-select-known-network "polygon")
+ {:name "Layer3"
+  :type :group
+  :check common-state-checks
+  :actions
+  [{:name "Layer3: open layer3 website"
+    :type :keyboard
+    :keys [[:ctrl :t] "https://layer3.xyz/bridge" :enter 2000 [427 660]]}
+   {:name "Layer3: focus and select polygon, top window"
+    ; :wait 4000 ;; until site is loaded
+    :type :keyboard
+    :keys (concat (keys-search-select "from") [1000 [528 520] :mouse1])
+    :check {:type :pattern
+            :xy [404 579]
+            :regexp "x{10}y{15}"                            ;; make sure expected UI
+            :direction :hor
+            :length 60
+            :await 300}}
+   {:name "Layer3: focus avalanche, bottom window"
+    :type :keyboard
+    :keys (concat (keys-search-select "to") [:space] (keys-search "avalanche"))
+    :check {:type :pattern
+            :xy [404 579]
+            :regexp "x{10}y{15}"                            ;; make sure expected UI
+            :direction :hor
+            :length 60
+            :await 300}}
+   {:name "Layer3: select avalanche, bottom window (could be scrolled)"
+    :type :keyboard
+    :keys [[518 697] :mouse1]
+    :safe true
+    :check {:type :pattern
+            :await 4000
+            :direction :hor
+            :length 60
+            :regexp "[xgswrv]*b+[xgswrv]+b+[xgswrv]*"
+            :xy [450 697]}}
+   (layer3-usd-select [788 341] "usdt")
+   (layer3-usd-select [788 496] "usdc")
+   {:name "Layer3: connect the wallet"
+    :type :keyboard
+    :keys
+    (concat [[637 577] :mouse1 2000] (keys-search-select "MetaMask") [:enter])}
+   common-mm-wait-fox-gone
+   common-mm-skip-through-got-it-and-proceed-next
+   common-mm-skip-through-got-it-and-proceed-next
+   {:name "Layer3: select avalanche again (make sure it's shown)"
+    :type :keyboard
+    :keys (concat
+           [[525 432] :mouse1]
+           (keys-search "avalanche"))}
+   {:name "Layer3: select avalanche again (click on it) "
+    :type :keyboard
+    :keys [[510 747] :mouse1]
+    :check {:type :pattern
+            :await 3000
+            :direction :hor
+            :length 90
+            :regexp "r{3}.*b{3}"
+            :xy [445 747]}}
+   {:name "Layer3: select max"
+    :type :keyboard
+    :keys (keys-search-select "max")}
+   {:name "Layer3: review root"
+    :type :keyboard
+    :wait 3500
+    :keys (keys-search-select "review route")}
+   {:name "Layer3: approve usdt transfer"
+    :type :keyboard
+    :wait 3000
+    :keys (keys-search-select "Approve usdt transfer")}
+   {:name "Stargate: ММ - Подтверждение максимального перевода"
+    :type :keyboard
+    :keys
+    [2000 [:ctrl :f] "use default" :enter [:tab 3] [:enter 2] [:tab 5] :enter]
+    :check common-mm-check-fox-gone}
+   {:name "Metamask: final transaciton approve (wait until orange fox is gone)"
+    :type :keyboard
+    :keys [1000 [1107 524] :mouse1 1000 [:shift :tab] [:down 5]]
+    :check common-mm-check-fox-gone}
+   {:name "Metamask: final transaciton approve (wait until orange fox is gone)"
+    :type :keyboard
+    :keys (keys-search-select "confirm bridge")}]
+  :repeat-unless {:times 2
+                  :check [{:type :pattern
+                           :xy [616 239]
+                           :regexp "g{20}"
+                           :direction :ver
+                           :length 240
+                           :await (* 1000 60 30)}]}}]

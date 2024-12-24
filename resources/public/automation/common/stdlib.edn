@@ -1,0 +1,97 @@
+(defn keys-search [s]
+  [[:ctrl :f] [s] [:ctrl :v] :esc])
+
+(defn keys-search-select [s]
+  (vec (concat (keys-search s) [1000 :enter])))
+
+(defn action-open-website
+  [website & [-name]]
+  {:name (or -name (str "Open website " website))
+   :type :keyboard
+   :keys [[:ctrl :t] [website] [:ctrl :v] :enter]})
+
+(defn action-close-tab [& [-name]]
+  {:name (or -name "Close tab")
+   :type :keyboard
+   :keys [[:ctrl :w]]})
+
+(comment
+  (action-open-website "ya.ru")
+  ;; with custom name:
+  (action-open-website "ya.ru" "Open ya.ru"))
+
+(def url-metamask "chrome-extension://jcipneincccdfacfcagaeckcdcigdael")
+
+(defn action-mm-select-known-network
+  [network-name  & [-name]]
+  {:name (or -name
+             (str "MM: select known network group " network-name))
+   :type :group
+   :actions [(action-open-website
+              (str url-metamask "/home.html"))
+             {:name "MM: remove Protect your funds modal form, optional"
+              :type :keyboard
+              :wait 7000
+              :delay 1000
+              ;; just press "got it" (could appear)
+              :keys (keys-search-select "Got it")}
+             {:name "MM: click networks dropdown"
+              :type :keyboard
+              :delay 1000
+              :keys (vec
+                     (concat
+                      [1500 [341 194] :mouse1 2000]
+                      (keys-search-select network-name)
+                      [1500 [:ctrl :w]]))
+              :check {:type :!pattern
+                      :await 10000
+                      :direction :hor
+                      :length 60
+                      :regexp "o"
+                      :xy [629 345]}}]})
+
+(def common-state-checks
+  [{:type :screen-size
+    :xy [1280 960]}
+   {:type :focused
+    :regexp "SunBrowser"}])
+
+(def common-mm-check-fox-gone
+  [{:type :pattern
+    :await 15000
+    :direction :hor
+    :length 60
+    :regexp "o"
+    :comment "Оранжевая иконка метамаска в углу открытого окошка"
+    :xy [926 9]}
+   {:type :!pattern
+    :await 15000
+    :direction :hor
+    :length 150
+    :regexp "o{10}"
+    :comment "Пропала Лиса в середине"
+    :xy [1041 270]}])
+
+(def common-mm-wait-fox-gone
+  {:name "Metamask: check that MM opened"
+   :type :keyboard
+   :keys []
+   :check common-mm-check-fox-gone})
+
+(def common-mm-proceed-next
+  {:name "Metamask: scroll bottom and click approve with mouse"
+   :type :keyboard
+   :keys [[1107 524] :mouse1 1000 :mouse1 [:down 10] [1180 562] :mouse1]})
+
+(def common-mm-skip-through-got-it-and-proceed-next
+  {:name "Metamask: click trough 'got it' and proceed"
+   :type :group
+   :actions [{:name "Metamask: click 'Got it'"
+              :type :keyboard
+              :wait 3000
+              :keys (keys-search-select "Got it")},
+             common-mm-proceed-next]})
+
+
+(comment
+  (action-mm-select-known-network "Binance Smart Chain"))

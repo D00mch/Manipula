@@ -1,0 +1,84 @@
+[{:name "WooFi_2: Main scenario"
+  :type :group
+  :check common-state-checks
+  :actions
+  [(action-mm-select-known-network "Avalanche")
+   (action-open-website "fi.woo.org/swap")
+   {:name "WooFi_2: Click on token drop-down"
+    :type :keyboard
+    :wait 3000
+    :keys [[355 365] :mouse1 2000]
+    :check {:type :pattern
+            :await 10000
+            :direction :hor
+            :length 60
+            :regexp "[xrs]*w[xrs]*"
+            :xy [313 359]}}
+   {:name "WooFi_2: Select USDC"
+    :type :keyboard
+    :keys [:tab "USDC" [105 465] :mouse1 2000]}
+   {:name "WooFi_2: Set maximum value"
+    :type :keyboard
+    :keys [[360 400] :mouse1 2000]}
+   {:type :keyboard
+    :name "WooFi_2: Open networks drop-down"
+    :check {:type :pattern
+            :await 10000
+            :direction :hor
+            :length 30
+            :regexp "[xrs]*w[xrs]*"
+            :xy [26 497]}
+    :keys [[100 500] :mouse1 2000]}
+   {:type :keyboard
+    :name "WooFi_2: Select Arbitrum Network"
+    :check {:type :pattern
+            :await 10000
+            :direction :hor
+            :length 30
+            :regexp "[xbg]*s[xbg]*"
+            :xy [28 704]}
+    :keys [[90 704] :mouse1 2000]}
+   {:type :keyboard
+    :name "WooFi: Select USDT token"
+    :keys [[365 550] :mouse1 :tab "USDT" [110 655] :mouse1 1000]}
+   {:name "WooFi: Verify that Arbitrum and USDT selected"
+    :type :keyboard
+    :keys (keys-search-select "Approve USDC")
+    :check [{:type :pattern
+             :await 10000
+             :direction :hor
+             :length 30
+             :regexp "[xsgwo]*b[xsgwo]*"
+             :xy [28 500]}
+            {:type :pattern
+             :await 10000
+             :direction :hor
+             :length 30
+             :regexp "[xs]*g[xs]*"
+             :xy [314 550]}]}
+   {:name "WooFi: ММ - Подтверждение максимального перевода"
+    :type :keyboard
+    :keys
+    [2000 [:ctrl :f] "use default" :enter [:tab 3] [:enter 2] [:tab 5] :enter]}
+   common-mm-wait-fox-gone
+   common-mm-skip-through-got-it-and-proceed-next
+   {:name "WooFi_2: Click SWAP"
+    :type :keyboard
+    :keys (keys-search "Swap")
+    :check {:type :pattern
+            :await 10000
+            :direction :hor
+            :length 60
+            :regexp "b{60}"
+            :xy [165 743]}}
+   {:name "WooFi_2: Click Confirm swap"
+    :type :keyboard
+    :keys [[638 743] :mouse1 2000]
+    :check {:type :pattern
+            :await 10000
+            :direction :hor
+            :length 60
+            :regexp "b{60}"
+            :xy [638 743]}}
+   common-mm-wait-fox-gone
+   common-mm-skip-through-got-it-and-proceed-next]}]

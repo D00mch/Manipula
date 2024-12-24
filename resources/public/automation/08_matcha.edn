@@ -1,0 +1,85 @@
+{:name "Matcha: Меняем USDT arbitrum на USDC arbitrum"
+ :type :group
+ :check common-state-checks
+ :actions
+ [(action-mm-select-known-network "Arbitrum")
+  (action-open-website
+    "https://www.matcha.xyz/markets/42161/0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8"
+    "Matcha: open website")
+  {:name "Matcha: verify you are a human"
+   :type :keyboard
+   :keys (concat [2000]
+                 (keys-search-select "Verify you are human")
+                 [[:shift :tab] :space 2000 [:ctrl :r]])}
+  {:name "Matcha: connect wallet"
+   :type :keyboard
+   :keys (keys-search-select "connect wallet")}
+  
+  {:name "Matcha: connect wallet"
+   :type :keyboard
+   :pattern {:type :pattern
+             :await 7000
+             :direction :hor
+             :length 60
+             :regexp "o{2}"
+             :xy [285 399]}
+   :keys (keys-search-select "metamask")}
+  common-mm-wait-fox-gone
+  common-mm-skip-through-got-it-and-proceed-next
+  common-mm-skip-through-got-it-and-proceed-next
+  {:name "Matcha: swap tokens USDT->USDC, Arbitrum"
+   :type :group
+   :actions [(action-close-tab)
+             {:name "Matcha: open website"}
+             {:name "Matcha: select token area"
+              :type :keyboard
+              :keys (keys-search-select "select token")
+              :check {:type :pattern
+                      :await 10000
+                      :direction :hor
+                      :length 120
+                      :regexp "b{4}"
+                      :xy [14 167]}}
+             
+             {:type :keyboard
+              :name "Match: make sure USDT selected"
+              :delay 400
+              :keys ["usdt" [553 408] 1000 :mouse1]
+              :check {:type :pattern
+                      :xy [368 285]
+                      :regexp "s{8}w{20}"
+                      :direction :hor
+                      :length 120
+                      :await 5000}}
+             {:type :keyboard
+              :name "Matcha: select max"
+              :keys [[1175 333] :mouse1 [100 100]]}
+             {:type :keyboard
+              :name "Matcha: approve spending usdt"
+              :keys (keys-search-select "approve spending usdt")
+              :check {:type :pattern
+                      :xy [800 696]
+                      :regexp "w{3}s{1,4}x{5}"
+                      :direction :hor
+                      :length 120
+                      :await 10000}}
+             common-mm-wait-fox-gone
+             {:name "Matcha: Use default"
+              :type :keyboard
+              :keys [:tab :enter]}
+             common-mm-skip-through-got-it-and-proceed-next
+             common-mm-skip-through-got-it-and-proceed-next
+             {:name "Matcha: Review Order"
+              :type :keyboard
+              :keys [[923 709] :mouse1]}
+             {:name "Matcha: Place order"
+              :type :keyboard
+              :keys (keys-search-select "Place order")
+              :check {:type :pattern
+                      :xy [812 664]
+                      :regexp "w{3}s{1,4}x{5}"
+                      :direction :hor
+                      :length 120
+                      :await 10000}}
+             common-mm-wait-fox-gone
+             common-mm-skip-through-got-it-and-proceed-next]}]}
